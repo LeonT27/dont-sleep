@@ -5,7 +5,7 @@ function counter(s) {
   setInterval(() => {
     seconds += 1;
     document.getElementById(
-      "app"
+      "count"
     ).innerHTML = `<p>You have been here for ${seconds} seconds.</p>`;
   }, 1000);
 }
