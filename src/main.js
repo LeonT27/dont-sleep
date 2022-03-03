@@ -1,7 +1,7 @@
 "use strict";
 
-function counter() {
-  let seconds = 0;
+function counter(s) {
+  let seconds = s;
   setInterval(() => {
     seconds += 1;
     document.getElementById(
@@ -10,14 +10,18 @@ function counter() {
   }, 1000);
 }
 
-counter();
+counter(0);
+//TODO dontSleep on init
+let dontSleep = "wakeLock" in navigator ? true : null;
 
-var screenLock = "wakeLock" in navigator;
+document.getElementsByTagName("BODY")[0].classList.add(dontSleep);
 
-document.getElementsByTagName("BODY")[0].classList.add(screenLock);
+console.log(dontSleep);
 
 document.addEventListener("visibilitychange", async () => {
-  if (screenLock !== null && document.visibilityState === "visible") {
-    screenLock = await navigator.wakeLock.request("screen");
+  if (dontSleep !== null && document.visibilityState === "visible") {
+    dontSleep = await navigator.wakeLock.request("screen");
+
+    console.log(dontSleep);
   }
 });
