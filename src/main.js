@@ -11,3 +11,13 @@ function counter() {
 }
 
 counter();
+
+var screenLock = "wakeLock" in navigator;
+
+document.getElementsByTagName("BODY")[0].classList.add(screenLock);
+
+document.addEventListener("visibilitychange", async () => {
+  if (screenLock !== null && document.visibilityState === "visible") {
+    screenLock = await navigator.wakeLock.request("screen");
+  }
+});
