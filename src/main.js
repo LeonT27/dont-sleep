@@ -3,13 +3,13 @@
 let state = {
   seconds: 0,
   counterId: 0,
-  dontSleep: false,
+  dontSleep: null,
 };
 
 let incrementSeconds = () => state.seconds++;
 let resetSeconds = () => (state.seconds = 0);
 let runCounter = () => (state.counterId = counter());
-let setDontSleep = async () => (state.dontSleep = await dontSleep());
+let activateDontSleep = async () => (state.dontSleep = await dontSleep());
 
 let $D = document;
 let $body = $D.getElementsByTagName("BODY")[0];
@@ -25,12 +25,12 @@ let updateCounterView = () => ($counter.innerHTML = state.seconds);
 let resetCounterView = () => ($counter.innerHTML = 0);
 let showErrors = () => {
   $counterText.classList.add("hidden");
-  $error.classList.toggle("hidden");
+  $error.classList.remove("hidden");
 };
 
-let onVisibilityChange = async () => {
+let onVisibilityChange = () => {
   if (state.dontSleep !== null && $D.visibilityState === "visible") {
-    await dontSleep();
+    activateDontSleep();
     runCounter();
   }
 
@@ -54,17 +54,17 @@ let clearCounter = (intervalId) => {
 
 let dontSleep = async () => {
   try {
-    setTextColor("true");
+    setTextColor("green-text");
+    return await navigator.wakeLock.request("screen");
   } catch (error) {
-    setTextColor("false");
     clearCounter(state.counterId);
     showErrors();
-    return false;
+    setTextColor("red-text");
+    return null;
   }
-  return true;
 };
 
-$D.onvisibilitychange = async () => onVisibilityChange();
+$D.onvisibilitychange = () => onVisibilityChange();
 
 runCounter();
-setDontSleep();
+activateDontSleep();
